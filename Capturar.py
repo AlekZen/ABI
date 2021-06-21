@@ -25,8 +25,25 @@ my_slot1 = st.empty()
 # Appends an empty slot to the app. We'll use this later.
 
 
+def returnCameraIndexes():
+    # checks the first 10 indexes.
+    index = 0
+    arr = []
+    i = 10
+    while i > 0:
+        cap = cv2.VideoCapture(index)
+        if cap.read()[0]:
+            arr.append(index)
+            cap.release()
+        index += 1
+        i -= 1
+    return arr
 
 
+st.write(returnCameraIndexes())
+
+seleccionada=st.empty()
+indexCam= st.sidebar.selectbox('Probar camaras', returnCameraIndexes())
 
 dataPath = 'datos'
 datosPersona = dataPath + '/' + persona
@@ -60,9 +77,9 @@ if  persona :
     st.write('Carpetas en el directorio',totalDir)
     st.write('Total:',(totalDir + totalFiles))
 
-
+seleccionada.write('Camara numero : '+str(indexCam))
 FRAME_WINDOW = st.image([])
-camera = cv2.VideoCapture(-1)
+camera = cv2.VideoCapture(indexCam)
 
 
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')

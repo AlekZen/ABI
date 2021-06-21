@@ -18,6 +18,9 @@ if ejecuta == 'Reconocer':
     file= 'Reconocer.py'
 
 
+
+
+
 # Parse command-line arguments.
 if len(sys.argv) > 1:
     folder = os.path.abspath(sys.argv[1])
