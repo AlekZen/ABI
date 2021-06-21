@@ -93,6 +93,7 @@ while run:
     k = cv2.waitKey(1)
     if k == 27 or count >= totalFiles+300:
         break
+    camera.release()
   
 else:
     st.write('Captura un nombre para capturar su rostro')

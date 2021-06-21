@@ -9,7 +9,7 @@ run = st.checkbox('Reconocer')
 
 dataPath = 'datos'
 imagePaths = os.listdir(dataPath)
-st.write('Rutas: ', imagePaths)
+
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
 
@@ -64,7 +64,8 @@ while run:
         break
   
 else:
-    st.write('Captura un nombre para capturar su rostro')
+    st.write('Activa el boton de reconocer para comenzar la rutina')
   
     
 
+st.write('Personas existentes: ', imagePaths)

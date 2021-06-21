@@ -35,14 +35,13 @@ def returnCameraIndexes():
     return arr
 
 
-st.write(returnCameraIndexes())
 
 
 
 seleccionada=st.sidebar.empty()
 indexCam= st.sidebar.selectbox('Probar camaras', returnCameraIndexes())
 seleccionada.write('Camara numero : '+str(indexCam))
-
+st.sidebar.write('Camaras disponibles: '+str(returnCameraIndexes()))
 
 # Parse command-line arguments.
 if len(sys.argv) > 1:
