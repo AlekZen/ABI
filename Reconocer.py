@@ -19,7 +19,7 @@ cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
 FRAME_WINDOW = st.image([])
 camera = cv2.VideoCapture(0,cv2.CAP_DSHOW)
-
+#camera = cv2.VideoCapture(indexCam ,cv2.CAP_DSHOW)
 
 
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
