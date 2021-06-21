@@ -4,7 +4,7 @@ import sys
 import importlib.util
 
 
-ejecuta= st.sidebar.radio('¿Que quieres hacer?', ['Capturar','Entrenar','Reconocer'])
+ejecuta= st.sidebar.radio('¿Elige una funcion?', ['Capturar','Entrenar','Reconocer'])
 
 if ejecuta == 'Capturar':
     #exec('Capturar.py',{})
