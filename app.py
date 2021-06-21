@@ -8,14 +8,14 @@ ejecuta= st.sidebar.radio('¿Que quieres hacer?', ['Capturar','Entrenar','Recono
 
 if ejecuta == 'Capturar':
     #exec('Capturar.py',{})
-    file= 'A:\BOTSI\Attendance\OpenCV\Pys\Capturar.py'
+    file= '.\Capturar.py'
 if ejecuta == 'Entrenar':
     #exec('Capturar.py',{})
-    file= 'A:\BOTSI\Attendance\OpenCV\Pys\entrenar.py'
+    file= '.\entrenar.py'
 
 if ejecuta == 'Reconocer':
     #exec('Capturar.py',{})
-    file= 'A:\BOTSI\Attendance\OpenCV\Pys\Reconocer.py'
+    file= '.\Reconocer.py'
 
 
 # Parse command-line arguments.
