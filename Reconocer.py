@@ -2,11 +2,32 @@ import cv2
 import os
 import streamlit as st
 import imutils
-from datetime import datetime
+import datetime
+import pyodbc
+import time
 
 encabezado = st.empty()
 encabezado.header('Reconocimiento de rostros')
 run = st.checkbox('Reconocer')
+
+
+ts = time.time()
+Date = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d')
+timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+Time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+Hour, Minute, Second = timeStamp.split(":")
+
+st.write('Fecha: ',Date)
+st.write('Tiempo estampa: ' ,timeStamp)
+st.write('El tiempo:',Time)
+st.write('La hora: ',Hour)
+st.write('Minuto: ',Minute)
+st.write("Segundo: ", Second)
+
+
+
+
+
 
 FRAME_WINDOW = st.image([])
 
@@ -115,3 +136,23 @@ else:
     
 
 st.write('Personas existentes: ', imagePaths)
+
+
+
+
+ts = time.time()
+Date = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d')
+timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+Time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+Hour, Minute, Second = timeStamp.split(":")
+
+st.write('Fecha: ',Date)
+st.write('Tiempo estampa: ' ,timeStamp)
+st.write('El tiempo:',Time)
+st.write('La hora: ',Hour)
+st.write('Minuto: ',Minute)
+st.write("Segundo", Second)
+
+
+
+
