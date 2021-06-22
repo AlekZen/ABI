@@ -1,7 +1,7 @@
 
 #%%
 from IPython.display import HTML, Javascript, display
-from google.colab.output import eval_js
+#from google.colab.output import eval_js
 from base64 import b64decode
 import numpy as np
 import io
@@ -78,7 +78,7 @@ sleep(2000).then(() => {
 </script>
 """
 
-
+#%%
 def start_webcam():
   js = Javascript('''
     async function startWebcam() {

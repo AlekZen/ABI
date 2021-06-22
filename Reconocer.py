@@ -2,6 +2,7 @@ import cv2
 import os
 import streamlit as st
 import imutils
+from datetime import datetime
 
 encabezado = st.empty()
 encabezado.header('Reconocimiento de rostros')
@@ -57,6 +58,20 @@ faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalfa
 dataPath = 'datos'
 listaPersonas= os.listdir(dataPath)
 
+margen= st.sidebar.slider('Margen', min_value=0, max_value=1000,value=70)
+
+def markAttendance(name):
+    with open('Attendance.csv','r+') as f:
+        myDataList = f.readlines()
+        nameList = []
+        for line in myDataList:
+            entry = line.split(',')
+            nameList.append(entry[0])
+        if name not in nameList:
+            now = datetime.now()
+            dtString = now.strftime('%d/%m/%Y')
+            timeString = now.strftime('%H:%M:%S')
+            f.writelines(f'\n{name},{dtString},{timeString}')
 
 
 
@@ -75,9 +90,12 @@ while run:
         rostro = cv2.resize(rostro,(150,150),interpolation=cv2.INTER_CUBIC)
         result = face_recognizer.predict(rostro)
         cv2.putText(frame,'{}'.format(result),(x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
-        if result[1]<75:
+        if result[1]<margen:
             cv2.putText(frame,'{}'.format(imagePaths[result[0]]),(x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
             cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
+            name=imagePaths[result[0]]
+            markAttendance(name)
+            
         else:
             cv2.putText(frame,'Desconocido',(x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
             cv2.rectangle(frame, (x,y),(x+w,y+h),(0,0,255),2)
