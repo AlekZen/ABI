@@ -4,8 +4,36 @@ import streamlit as st
 import imutils
 
 encabezado = st.empty()
-encabezado.header('Reconocimiento en desarrollo...')
+encabezado.header('Reconocimiento de rostros')
 run = st.checkbox('Reconocer')
+
+FRAME_WINDOW = st.image([])
+
+def returnCameraIndexes():
+    # checks the first 10 indexes.
+    index = 0
+    arr = []
+    i = 10
+    while i > 0:
+        cap = cv2.VideoCapture(index)
+        if cap.read()[0]:
+            arr.append(index)
+            cap.release()
+        index += 1
+        i -= 1
+    return arr
+
+
+
+
+
+seleccionada=st.sidebar.empty()
+indexCam= st.sidebar.selectbox('Probar camaras', returnCameraIndexes())
+seleccionada.write('Camara numero : '+str(indexCam))
+st.sidebar.write('Camaras disponibles: '+str(returnCameraIndexes()))
+
+
+
 
 dataPath = 'datos'
 imagePaths = os.listdir(dataPath)
@@ -17,8 +45,8 @@ face_recognizer.read('modeloLBPH.xml')
 cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
 
-FRAME_WINDOW = st.image([])
-camera = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+
+camera = cv2.VideoCapture(indexCam,cv2.CAP_DSHOW)
 #camera = cv2.VideoCapture(indexCam ,cv2.CAP_DSHOW)
 
 

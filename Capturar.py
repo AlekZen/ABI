@@ -11,7 +11,7 @@ from datetime import datetime
 
 st.title("Capturar rostros")
 
-
+FRAME_WINDOW = st.image([])
 
 
 # Forms can be declared using the 'with' syntax
@@ -49,6 +49,32 @@ for base, dirs, files in os.walk(APP_FOLDER):
 conteo = totalDir
 
 
+def returnCameraIndexes():
+    # checks the first 10 indexes.
+    index = 0
+    arr = []
+    i = 10
+    while i > 0:
+        cap = cv2.VideoCapture(index)
+        if cap.read()[0]:
+            arr.append(index)
+            cap.release()
+        index += 1
+        i -= 1
+    return arr
+
+
+
+
+
+seleccionada=st.sidebar.empty()
+indexCam= st.sidebar.selectbox('Probar camaras', returnCameraIndexes())
+seleccionada.write('Camara numero : '+str(indexCam))
+st.sidebar.write('Camaras disponibles: '+str(returnCameraIndexes()))
+
+
+
+
 if  persona :
     my_slot1.header('Vamos a procesar datos de : '+persona)
     # Replaces the first empty slot with a text string.
@@ -59,8 +85,8 @@ if  persona :
     st.write('Total:',(totalDir + totalFiles))
 
 
-FRAME_WINDOW = st.image([])
-camera = cv2.VideoCapture(-1)
+
+camera = cv2.VideoCapture(indexCam)
 
 
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
@@ -93,8 +119,7 @@ while run:
     k = cv2.waitKey(1)
     if k == 27 or count >= totalFiles+300:
         break
-    camera.release()
-  
+      
 else:
     st.write('Captura un nombre para capturar su rostro')
     
