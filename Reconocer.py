@@ -11,7 +11,16 @@ encabezado.header('Reconocimiento de rostros')
 run = st.sidebar.checkbox('Reconocer')
 sql = st.sidebar.checkbox('Grabar en SQL')
 if sql:
-    verSQL= st.sidebar.checkbox('Ver SQL' )
+    try:
+        verSQL= st.sidebar.checkbox('Ver SQL' )
+        server = 'AI\ALEK' # for a named instance
+        database='asistencia'
+        user= 'sa'
+        pswd='Alek.Zen'
+        cnxn = pyodbc.connect('Driver={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+user+';PWD='+ pswd)
+        cursor = cnxn.cursor()
+    except:
+        st.sidebar.write('No hay enlace con SQL')
 
 
 ts = time.time()
@@ -27,15 +36,10 @@ Hour, Minute, Second = timeStamp.split(":")
 # st.write('Minuto: ',Minute)
 # st.write("Segundo: ", Second)
 
-server = 'AI\ALEK' # for a named instance
-database='asistencia'
-user= 'sa'
-pswd='Alek.Zen'
-cnxn = pyodbc.connect('Driver={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+user+';PWD='+ pswd)
-cursor = cnxn.cursor()
 
 
-def fill_attendance():
+if sql:
+    def fill_attendance():
         ts = time.time()
         Date = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d')
         timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
@@ -54,16 +58,18 @@ def fill_attendance():
         ###Connect to the database
         try:
             if verSQL:
-                cursor.execute("SELECT @@version;") 
-                row = cursor.fetchone() 
-                while row: 
-                    st.sidebar.write(row[0])
-                    row = cursor.fetchone()
-                
+                try:
+                    cursor.execute("SELECT @@version;") 
+                    row = cursor.fetchone() 
+                    while row: 
+                        st.sidebar.write(row[0])
+                        row = cursor.fetchone()
+                except:
+                    print('No hay SQL')
             
 
         except Exception as e:
-            st.write(e)
+            print(e)
             
             
 
@@ -78,7 +84,7 @@ def fill_attendance():
 
         except Exception as ex:
             print(ex)  #
-            st.sidebar.write('No existe enlace con SQL: ')
+            
 
 
 
@@ -103,7 +109,7 @@ if sql:
            print('Grabando a : '+name + 'en '+DB_table_name)
            
         except Exception as e:
-           st.sidebar.write(e)
+           print('No funciona el enlace con SQL')
            
 
 
