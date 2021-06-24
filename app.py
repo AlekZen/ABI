@@ -4,7 +4,7 @@ import sys
 import importlib.util
 import cv2
 
-ejecuta= st.sidebar.radio('¿Elige una funcion?', ['Capturar','Entrenar','Reconocer'])
+ejecuta= st.sidebar.radio('¿Elige una funcion?', ['Reconocer','Capturar','Entrenar'])
 
 if ejecuta == 'Capturar':
     #exec('Capturar.py',{})

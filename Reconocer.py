@@ -8,7 +8,10 @@ import time
 
 encabezado = st.empty()
 encabezado.header('Reconocimiento de rostros')
-run = st.checkbox('Reconocer')
+run = st.sidebar.checkbox('Reconocer')
+sql = st.sidebar.checkbox('Grabar en SQL')
+if sql:
+    verSQL= st.sidebar.checkbox('Ver SQL' )
 
 
 ts = time.time()
@@ -17,13 +20,91 @@ timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
 Time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
 Hour, Minute, Second = timeStamp.split(":")
 
-st.write('Fecha: ',Date)
-st.write('Tiempo estampa: ' ,timeStamp)
-st.write('El tiempo:',Time)
-st.write('La hora: ',Hour)
-st.write('Minuto: ',Minute)
-st.write("Segundo: ", Second)
+# st.write('Fecha: ',Date)
+# st.write('Tiempo estampa: ' ,timeStamp)
+# st.write('El tiempo:',Time)
+# st.write('La hora: ',Hour)
+# st.write('Minuto: ',Minute)
+# st.write("Segundo: ", Second)
 
+server = 'AI\ALEK' # for a named instance
+database='asistencia'
+user= 'sa'
+pswd='Alek.Zen'
+cnxn = pyodbc.connect('Driver={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+user+';PWD='+ pswd)
+cursor = cnxn.cursor()
+
+
+def fill_attendance():
+        ts = time.time()
+        Date = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d')
+        timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+        Time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+        Hour, Minute, Second = timeStamp.split(":")
+        ####Creatting csv of attendance
+
+        ##Create table for Attendance
+        date_for_DB = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d')
+        global subb
+        subb='Attendance'
+        global DB_table_name
+        DB_table_name = str(subb + "_" + Date + "_Time_" + Hour + "_")
+
+        
+        ###Connect to the database
+        try:
+            if verSQL:
+                cursor.execute("SELECT @@version;") 
+                row = cursor.fetchone() 
+                while row: 
+                    st.sidebar.write(row[0])
+                    row = cursor.fetchone()
+                
+            
+
+        except Exception as e:
+            st.write(e)
+            
+            
+
+        sql ="USE ["+database +"] if not exists (select * from sysobjects where name='"+DB_table_name +"' and xtype='U') CREATE TABLE [dbo].["+DB_table_name+"]([ID] int not null identity(1,1) primary key,[Nombre] [nvarchar](150) NULL,[Fecha] [date] NULL,[Hora] [time](7) NULL) "
+        
+
+        try:
+            cursor.execute(sql)
+            cnxn.commit()
+            if verSQL:
+                st.sidebar.write('Trabajando en la tabla: '+DB_table_name)
+
+        except Exception as ex:
+            print(ex)  #
+            st.sidebar.write('No existe enlace con SQL: ')
+
+
+
+
+if sql:
+    #Sample select query
+    fill_attendance()
+    def enter_data_DB(name):
+        ts = time.time()
+        fecha=str(datetime.datetime.now())
+        Date = datetime.datetime.fromtimestamp(ts).strftime('%d/%Y/%m')
+        timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+        Time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M')
+        Hour, Minute, Second = timeStamp.split(":")
+        Insert_data = "USE ["+database +"]  INSERT INTO [dbo].["+DB_table_name+"] VALUES ( '"+str(name)+"','"+fecha+"','"+str(Time)+"')"
+        print(Insert_data)
+        VALUES = ( str(name), str(Date), str(Time))
+        print('Fecha: '+ fecha)       
+        try:
+           cursor.execute(Insert_data)
+           cnxn.commit()
+           print('Grabando a : '+name + 'en '+DB_table_name)
+           
+        except Exception as e:
+           st.sidebar.write(e)
+           
 
 
 
@@ -46,12 +127,13 @@ def returnCameraIndexes():
     return arr
 
 
+         
 
 
 
 seleccionada=st.sidebar.empty()
-indexCam= st.sidebar.selectbox('Probar camaras', returnCameraIndexes())
-seleccionada.write('Camara numero : '+str(indexCam))
+indexCam= st.sidebar.selectbox('Elegir otra camara', returnCameraIndexes())
+seleccionada.write('Camara seleccionada : '+str(indexCam))
 st.sidebar.write('Camaras disponibles: '+str(returnCameraIndexes()))
 
 
@@ -79,7 +161,7 @@ faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalfa
 dataPath = 'datos'
 listaPersonas= os.listdir(dataPath)
 
-margen= st.sidebar.slider('Margen', min_value=0, max_value=1000,value=70)
+margen= st.sidebar.slider('Margen', min_value=0, max_value=1000,value=80)
 
 def markAttendance(name):
     with open('Attendance.csv','r+') as f:
@@ -89,7 +171,7 @@ def markAttendance(name):
             entry = line.split(',')
             nameList.append(entry[0])
         if name not in nameList:
-            now = datetime.now()
+            now = datetime.datetime.now()
             dtString = now.strftime('%d/%m/%Y')
             timeString = now.strftime('%H:%M:%S')
             f.writelines(f'\n{name},{dtString},{timeString}')
@@ -116,6 +198,8 @@ while run:
             cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
             name=imagePaths[result[0]]
             markAttendance(name)
+            if sql:
+                enter_data_DB(name)
             
         else:
             cv2.putText(frame,'Desconocido',(x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
@@ -139,19 +223,6 @@ st.write('Personas existentes: ', imagePaths)
 
 
 
-
-ts = time.time()
-Date = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d')
-timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
-Time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
-Hour, Minute, Second = timeStamp.split(":")
-
-st.write('Fecha: ',Date)
-st.write('Tiempo estampa: ' ,timeStamp)
-st.write('El tiempo:',Time)
-st.write('La hora: ',Hour)
-st.write('Minuto: ',Minute)
-st.write("Segundo", Second)
 
 
 
