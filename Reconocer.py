@@ -5,11 +5,17 @@ import imutils
 import datetime
 import pyodbc
 import time
+from FireBase import escribe
+
+#escribe('Sidd')
+
+#Streamlit
 
 encabezado = st.empty()
 encabezado.header('Reconocimiento de rostros')
 run = st.sidebar.checkbox('Reconocer')
 sql = st.sidebar.checkbox('Grabar en SQL')
+FB = st.sidebar.checkbox('Grabar en Firebase')
 if sql:
     try:
         verSQL= st.sidebar.checkbox('Ver SQL' )
@@ -206,6 +212,9 @@ while run:
             markAttendance(name)
             if sql:
                 enter_data_DB(name)
+                
+            if FB:
+                escribe(name)
             
         else:
             cv2.putText(frame,'Desconocido',(x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)

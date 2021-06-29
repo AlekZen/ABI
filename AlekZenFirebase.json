@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "alekzen-apps",
+  "private_key_id": "90ba5ed92635d891711763b90f0446f04631c509",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkWolug711xWr0\nDOcCkeY9wr4LX+xVvvBsj4O9jvTIUybPkz24NV0UmVMfq21clrEsjCgANv8mRRIq\nKTkAq593Nzs+YIEx2+V8ved/Wf70NyTTmq/WDm2ySjs3xvFH1S/SDl1Wqkn3msKe\nD1DobinBgfSy60vNaFxVP9XUUZmNEECNG48EAc3whsc7aIHnCrBx6wa0gh3nTtQS\npnOJceiVBOUZpDfGfQan+FO7oA8UTdyAPk9+PytQGeh0y9VXQsFDf5GjygixGHon\n+kM3u7nNXM/R6wGBOxK8PtX1qoHTRFAzF6N5T+T1h/6MLVs4EuhjA6sQmibTChID\n5eNHbcepAgMBAAECggEAECyOwM77KqdidqD8bO7Rwzsye6kVd3zCaVSYSOPUKBCy\nzZO2a7XospnCKegza3yy8+jZGOhQpMIAXyDOaMf6+f73+BQEMtVqmKORsCE5q2vv\n1lkvO7gQyI5wlHUiEoki2x+pxNkeTV0wEOD9+9m3h0EURTVNsOm3yHXvQ6VCILUT\ntPnKvP/BmrigNgGfUQjVt4VHATUZMjkD+gQDTfemIPUK8grmmSJzqe8FrgeG47Rm\nTKXYxsGqKsHdgVOlBmRUo8FzTtEjANGaM7tgyfmr+VSKDdlo+lKxJbCeDc3XoeD4\nGtO8k5nM9JLwhlrcfEH1vRwASh4vpaynKhOUqN5mWQKBgQDgL4UwxTJhIP21M5BF\ntirc63Z8TSY7+6/flrbsMcrVDE+OUS7HVjLSmV2BVOx0VmW5YwxFgyVtSMvAjhGl\nXPZuAJmkuvw1NguCrvj8WtrChuNAVATbX79tJiMhpH1aB/plUxJzqgaBciBH1pKS\n6PPxXPBMANSbUcrZBcrnm8FpXQKBgQC7rV7PLiOwbbkFs2J0A0z97E7FkReOCU2J\naTiH/4QkhLZf9/UgQeMCcgItjdm7mTL6aDCIngXW3A75WoaSkt0p6uo/223+lsq3\n3whcdiy41o9WMwoZCu4934yzXhm/gwYLCNS5tatys2sBGivd4KM9886vxcjtnJVh\n921gWpkWvQKBgQCqgdoGRuVTVFlCWO5w5uVg00FxtufOlVWlc6a6rAA927giYQJ4\nH8pVvMmOVT3mGdQSlQ+/SsjLfqNhV2x6XeMbtR8mWAT8n5dPlK7QmHVroFX1FjH/\ne6pHZMsxij7Am/LI387X48hA6cE9gihGziDDQVGOLM+HNkVWnH4/e4o2DQKBgF0I\nURI0lf50NZ6M0MYfiL/qrxWimeGP3P67yQkpcXDE1L735GwsHQLuTwQT6BXlmG6m\nzUA7zTs39LhI1qK76KRJzfr/pCPqzeydw8BJ2Ft8CKu7O0s0ruq+8TlM8UiNA6be\npsy0MJv4MpfmSE6Bd4pTXGanjbWzxB0/ENoNrwulAoGAaCRGFe2vBmpEQ7nvLu8i\nZiyRPKC5wWb5L5SDRMzlgEgNt/hLAqFPbQHqlh8ZxggnbwXr0rUNp8wCMRFIL/XJ\n6hg7RGKM5lrGTZwNH1FCk7Tqp8O8xZosGqMsZ34CZbFLzM7mi/yGWKfFBaN2rTzG\nbX+FaLcu/hNnpyUy4wl7AYQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "pythondealek@alekzen-apps.iam.gserviceaccount.com",
+  "client_id": "113972832135027826471",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pythondealek%40alekzen-apps.iam.gserviceaccount.com"
+}

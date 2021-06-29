@@ -3,6 +3,7 @@ import pyodbc
 import datetime
 import time
 
+from FireBase import escribe
 
 #%%
 server = 'AI\ALEK' # for a named instance
@@ -147,6 +148,6 @@ def enter_data_DB(name):
 
 #%%
 
-
+escribe('Sidd')
 
 enter_data_DB('Sidd')
