@@ -7,11 +7,53 @@ import numpy as np
 import datetime
 import pyodbc
 
+
 try:
     from FireBase import escribe
 except:
     st.write('Firebase error')
 
+
+
+
+#Camaras y Broncas
+
+def testDevice(source):
+   cap = cv2.VideoCapture(source) 
+   if cap is None or not cap.isOpened():
+       st.sidebar.write('Esta camara no funciona: ', source)
+   else: 
+       st.sidebar.write('Esta camara funciona: ', source)
+
+
+
+def returnCameraIndexes():
+    # checks the first 10 indexes.
+    index = 0
+    arr = []
+    i = 10
+    while i > 0:
+        cap = cv2.VideoCapture(index)
+        if cap.read()[0]:
+            arr.append(index)
+            cap.release()
+        index += 1
+        i -= 1
+    return arr
+
+
+if st.sidebar.checkbox('Tengo problemas con la camara'):
+    seleccionada=st.sidebar.empty()
+    indexCam= st.sidebar.selectbox('Elegir otra camara', returnCameraIndexes())
+    seleccionada.write('Camara seleccionada : '+str(indexCam))
+    st.sidebar.write('Camaras disponibles: '+str(returnCameraIndexes()))
+
+
+    st.sidebar.write('Probando camaras')
+    testDevice(0) 
+    testDevice(1) 
+    testDevice(2) 
+    testDevice(3) 
 
 
 ruta = dataPath = 'datos'
@@ -22,8 +64,10 @@ imagePaths = os.listdir(dataPath)
 #st.sidebar.button('Entrenar')
 
 FRAME_WINDOW = st.image([])
-indexCam =0
+FRAME_WINDOW2 = st.image([])
 ejecuta= st.sidebar.radio('¿Elige una funcion?', ['Reconocer','Capturar'])
+
+
 
 
 
@@ -95,7 +139,6 @@ def capturacion(ruta, persona):
 
 
 
-
 if st.sidebar.button('Entrenar'):
      entrenar()
 
@@ -152,12 +195,27 @@ timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
 Time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
 Hour, Minute, Second = timeStamp.split(":")
 
+def markAttendance(name):
+    with open('Attendance.csv','r+') as f:
+        myDataList = f.readlines()
+        nameList = []
+        for line in myDataList:
+            entry = line.split(',')
+            nameList.append(entry[0])
+        if name not in nameList:
+            now = datetime.datetime.now()
+            dtString = now.strftime('%d/%m/%Y')
+            timeString = now.strftime('%H:%M:%S')
+            f.writelines(f'\n{name},{dtString},{timeString}')
+
+
 
 if ejecuta == 'Reconocer':
 
     camera = cv2.VideoCapture(0,cv2.CAP_DSHOW)
     sql = st.sidebar.checkbox('Grabar en SQL')
     FB = st.sidebar.checkbox('Grabar en Firebase')
+    CSV = st.sidebar.checkbox('Grabar en CSV')
     margen= st.sidebar.slider('Margen', min_value=0, max_value=1000,value=80)
     if sql:
         try:
@@ -237,18 +295,20 @@ my_bar=st.empty()
 
 
 
-
-
-
+##El modelo
 status = st.empty()
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 face_recognizer.read('modeloLBPH.xml')
-
-
-
-
-
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+
+
+
+
+
+
+
+
+#La camarilla
 
 while True:
     ret, frame = camera.read() 
@@ -278,37 +338,42 @@ while True:
                         avance=0
                         break
 
-        if ejecuta == 'Reconocer':
-            gray   = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-            auxFrame = gray.copy()
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)    
-            faces = faceClassif.detectMultiScale(gray,1.3,5)
+    if ejecuta == 'Reconocer':
+        gray   = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        auxFrame = gray.copy()
+        faces = faceClassif.detectMultiScale(gray,1.3,5)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     
-            for(x,y,w,h) in faces:
-                rostro = auxFrame[y:y+h,x:x+w]
-                rostro = cv2.resize(rostro,(150,150),interpolation=cv2.INTER_CUBIC)
-                result = face_recognizer.predict(rostro)
-                cv2.putText(frame,'{}'.format(result),(x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
-                if result[1]<margen:
-                    cv2.putText(frame,'{}'.format(imagePaths[result[0]]),(x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
-                    cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
-                    name=imagePaths[result[0]]
-                    #markAttendance(name)
-                    if sql:
-                        enter_data_DB(name)
-                    if FB:
-                        escribe(name)
+        for(x,y,w,h) in faces:
+            rostro = auxFrame[y:y+h,x:x+w]
+            rostro = cv2.resize(rostro,(150,150),interpolation=cv2.INTER_CUBIC)
+            result = face_recognizer.predict(rostro)
+            cv2.putText(frame,'{}'.format(result),(x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
+            if result[1]<margen:
+                cv2.putText(frame,'{}'.format(imagePaths[result[0]]),(x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
+                cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
+                name=imagePaths[result[0]]
+                if CSV:
+                    markAttendance(name)
+                if sql:
+                    enter_data_DB(name)
+                if FB:
+                    escribe(name)
             
             else:
                 cv2.putText(frame,'Desconocido',(x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
                 cv2.rectangle(frame, (x,y),(x+w,y+h),(0,0,255),2)
     else: 
-        st.write('Hola')
+            st.write('Seleccionar una funcion')
     FRAME_WINDOW.image(frame)
     k = cv2.waitKey(1)
     if k == 27 :
         #FRAME_WINDOW.image([])
         break
+
+
+
+
 
 
 
