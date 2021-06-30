@@ -5,7 +5,7 @@ import imutils
 import datetime
 import pyodbc
 import time
-from FireBase import escribe
+
 
 #escribe('Sidd')
 
