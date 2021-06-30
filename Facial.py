@@ -5,10 +5,11 @@ import os
 import time
 import numpy as np
 import datetime
-import pyodbc
+
 
 
 try:
+    import pyodbc
     from FireBase import escribe
 except:
     st.write('Firebase error')
