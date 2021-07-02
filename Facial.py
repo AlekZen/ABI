@@ -14,8 +14,17 @@ try:
 except:
     st.write('Firebase error')
 
+global indexCam
+indexCam=0
+indexCamRtsp= 'rtsp://192.168.5.23:5554'
 
-
+#### FOR CAPTURING SCREEN RATHER THAN WEBCAM
+# def captureScreen(bbox=(300,300,690+300,530+300)):
+#     capScr = np.array(ImageGrab.grab(bbox))
+#     capScr = cv2.cvtColor(capScr, cv2.COLOR_RGB2BGR)
+#     return capScr
+#%%
+run = st.checkbox('Run') 
 
 #Camaras y Broncas
 
@@ -43,11 +52,24 @@ def returnCameraIndexes():
     return arr
 
 
-if st.sidebar.checkbox('Tengo problemas con la camara'):
+
+
+
+
+
+
+
+
+if st.sidebar.checkbox('Ajustes de camara'):
     seleccionada=st.sidebar.empty()
     indexCam= st.sidebar.selectbox('Elegir otra camara', returnCameraIndexes())
     seleccionada.write('Camara seleccionada : '+str(indexCam))
     st.sidebar.write('Camaras disponibles: '+str(returnCameraIndexes()))
+    st.write('Index '+ indexCamRtsp)
+      
+
+
+
 
 
     st.sidebar.write('Probando camaras')
@@ -68,10 +90,21 @@ FRAME_WINDOW = st.image([])
 FRAME_WINDOW2 = st.image([])
 ejecuta= st.sidebar.radio('¿Elige una funcion?', ['Reconocer','Capturar'])
 
+camiIP= st.sidebar.checkbox('Camara IP')
+if camiIP:
+    seleccionada=st.sidebar.empty()
+    os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp"
+    rtsp = st.sidebar.text_input(label='Camara IP')
+    indexCam=('rtsp://192.168.5.23:5554/onvif1')
+    if not rtsp:
+        seleccionada.write('Indice Camara IP actual : '+str(indexCam))
+    if rtsp:    
+        st.sidebar.success(('URL '+ rtsp ))
+        indexCam=rtsp
+        st.write('Indice camara '+indexCam)
+        seleccionada.write('Indice Camara IP seleccionada : '+str(indexCam))
 
-
-
-
+st.sidebar.write(indexCam)
 
 def entrenar():
     mensaje= st.empty()
@@ -211,9 +244,12 @@ def markAttendance(name):
 
 
 
-if ejecuta == 'Reconocer':
 
-    camera = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+if ejecuta == 'Reconocer':
+    camera = cv2.VideoCapture(indexCam,cv2.CAP_DSHOW)
+    if camiIP:
+        camera = cv2.VideoCapture(indexCam)
+
     sql = st.sidebar.checkbox('Grabar en SQL')
     FB = st.sidebar.checkbox('Grabar en Firebase')
     CSV = st.sidebar.checkbox('Grabar en CSV')
@@ -259,11 +295,11 @@ if ejecuta == 'Reconocer':
 
 
 
-st.write("Reconocedor")
+
 
 
 if ejecuta == 'Capturar':
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(indexCam)
     persona = st.sidebar.text_input(label='Escribe el nombre del que quieres capturar fotos')
     if not persona:
         st.sidebar.warning('Por favor ingresa el nombre de la persona.')
@@ -299,16 +335,22 @@ my_bar=st.empty()
 ##El modelo
 status = st.empty()
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
-face_recognizer.read('modeloLBPH.xml')
-faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+try:
+    face_recognizer.read('modeloLBPH.xml')
+except:
+    st.write('No Existe un modelo entrenado')
 
 
+try:
+    faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+except:
+    faceClassif = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
+os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp"
+#indexCam= 'rtsp://192.168.5.23:5554/onvif1'
+#camera = cv2.VideoCapture(indexCam)
 
-
-
-
-
+st.write('Camara actual: ' + str(indexCam))
 #La camarilla
 
 while True:
@@ -345,27 +387,29 @@ while True:
         faces = faceClassif.detectMultiScale(gray,1.3,5)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     
-        for(x,y,w,h) in faces:
-            rostro = auxFrame[y:y+h,x:x+w]
-            rostro = cv2.resize(rostro,(150,150),interpolation=cv2.INTER_CUBIC)
-            result = face_recognizer.predict(rostro)
-            cv2.putText(frame,'{}'.format(result),(x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
-            if result[1]<margen:
-                cv2.putText(frame,'{}'.format(imagePaths[result[0]]),(x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
-                cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
-                name=imagePaths[result[0]]
-                if CSV:
-                    markAttendance(name)
-                if sql:
-                    enter_data_DB(name)
-                if FB:
-                    escribe(name)
+        try:
+            for(x,y,w,h) in faces:
+                rostro = auxFrame[y:y+h,x:x+w]
+                rostro = cv2.resize(rostro,(150,150),interpolation=cv2.INTER_CUBIC)
+                result = face_recognizer.predict(rostro)
+                cv2.putText(frame,'{}'.format(result),(x,y-5),1,1.3,(255,255,0),1,cv2.LINE_AA)
+                if result[1]<margen:
+                    cv2.putText(frame,'{}'.format(imagePaths[result[0]]),(x,y-25),2,1.1,(0,255,0),1,cv2.LINE_AA)
+                    cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
+                    name=imagePaths[result[0]]
+                    if CSV:
+                        markAttendance(name)
+                    if sql:
+                        enter_data_DB(name)
+                    if FB:
+                        escribe(name)
             
-            else:
-                cv2.putText(frame,'Desconocido',(x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
-                cv2.rectangle(frame, (x,y),(x+w,y+h),(0,0,255),2)
-    else: 
-            st.write('Seleccionar una funcion')
+                else:
+                    cv2.putText(frame,'Desconocido',(x,y-20),2,0.8,(0,0,255),1,cv2.LINE_AA)
+                    cv2.rectangle(frame, (x,y),(x+w,y+h),(0,0,255),2)
+        except:
+            st.write("Hay que comenzxar por capturar el modelo")
+    
     FRAME_WINDOW.image(frame)
     k = cv2.waitKey(1)
     if k == 27 :
@@ -375,7 +419,7 @@ while True:
 
 
 
-
+st.write('Cam ejecutado')
 
 
 
