@@ -8,11 +8,13 @@ import datetime
 
 
 
+status = st.empty()
+
 try:
     import pyodbc
     from FireBase import escribe
 except:
-    st.write('Firebase error')
+    st.write('Firebase debug')
 
 global indexCam
 indexCam=0
@@ -108,7 +110,7 @@ st.sidebar.write(indexCam)
 
 def entrenar():
     mensaje= st.empty()
-    st.warning('Espera un poco, Entrenando...')
+    status.warning('Espera un poco, Entrenando...')
 
     dataPath = 'datos'
     listaPersonas= os.listdir(dataPath)
@@ -141,7 +143,7 @@ def entrenar():
 
     face_recognizer.train(facesData, np.array(labels))
     face_recognizer.write('modeloLBPH.xml')
-    st.info('El entrenamiento del modelo se ha completado con exito')
+    status.info('El entrenamiento del modelo se ha completado con exito')
     st.sidebar.write('Modelo entrenado, ve la opcion reconocer')
     return st.write('Modelo entrenado')
 
@@ -333,7 +335,7 @@ my_bar=st.empty()
 
 
 ##El modelo
-status = st.empty()
+
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 try:
     face_recognizer.read('modeloLBPH.xml')
