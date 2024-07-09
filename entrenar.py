@@ -41,8 +41,8 @@ st.write('Numero de 2s: ' , np.count_nonzero(np.array(labels)==2))
 cv2.destroyAllWindows()
         
 
-face_recognizer= cv2.face.LBPHFaceRecognizer_create()
+# face_recognizer= cv2.face.LBPHFaceRecognizer_create()
 
-face_recognizer.train(facesData, np.array(labels))
-face_recognizer.write('modeloLBPH.xml')
+#face_recognizer.train(facesData, np.array(labels))
+# face_recognizer.write('modeloLBPH.xml')
 mensaje.header('Modelo entrenado, ve la opcion reconocer')
